@@ -35,7 +35,6 @@ def download_and_process_wiki_data(
 
     import os
 
-
     if isinstance(languages, str):
         # extract words (\w+) from string
         import re
@@ -50,7 +49,7 @@ def download_and_process_wiki_data(
     download_and_extract(
         f"https://downloads.dbpedia.org/repo/dbpedia/wikidata/sameas-all-wikis/{datedbpedia2}/sameas-all-wikis.ttl.bz2",
         "ids.ttl",
-        verbose=verbose
+        verbose=verbose,
     )
 
     # Process each language
@@ -66,15 +65,65 @@ def download_and_process_wiki_data(
         download_and_extract(
             url_base + "wbc_entity_usage.sql.gz",
             os.path.join(language_dir, "wikidata.sql"),
-            verbose=verbose
+            verbose=verbose,
         )
         download_and_extract(
             url_base + "pages-meta-current.xml.bz2",
             os.path.join(language_dir, "pages.xml"),
-            verbose=verbose
+            verbose=verbose,
         )
 
         # Additional processing steps can be added here as per the original script
 
     if verbose:
         print("Done.")
+
+
+import xml.etree.ElementTree as ET
+import re
+
+
+def parse_wikimedia_xml(file_path):
+    """Parse (author, quote_text) pairs from xml file.
+     The xml file is assumped to be one that has been downloaded from wikimedia
+     (https://dumps.wikimedia.org/enwikiquote/).
+     For example, using the `download_and_process_wiki_data` function.
+
+    Note the relative filepath has, at the time of writing this, the format
+    `"{language}/pages.xml"` (e.g. `"en/pages.xml"`)
+
+    """
+    tree = ET.parse(file_path)
+    root = tree.getroot()
+
+    quotes_data = []
+
+    for page in root.findall('{http://www.mediawiki.org/xml/export-0.10/}page'):
+        title_elem = page.find('{http://www.mediawiki.org/xml/export-0.10/}title')
+        text_elem = page.find(
+            '{http://www.mediawiki.org/xml/export-0.10/}revision/{http://www.mediawiki.org/xml/export-0.10/}text'
+        )
+
+        # if title_elem is not None and text_elem is not None:
+        #     title = title_elem.text
+        #     text = text_elem.text
+
+        #     # Basic parsing for quotes (may need adjustment based on the actual format)
+        #     quotes = re.findall(r'\*\s*\'\'(.+?)\'\'', text)
+        #     for quote in quotes:
+        #         quotes_data.append((title, quote))
+
+        if (
+            title_elem is not None
+            and text_elem is not None
+            and text_elem.text is not None
+        ):
+            title = title_elem.text
+            text = text_elem.text
+
+            # Basic parsing for quotes (may need adjustment based on the actual format)
+            quotes = re.findall(r'\*\s*\'\'(.+?)\'\'', text)
+            for quote in quotes:
+                quotes_data.append((title, quote))
+
+    return quotes_data

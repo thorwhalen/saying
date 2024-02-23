@@ -1,4 +1,4 @@
 """AI tools for quotes and sayings."""
 
-from saying.util import get_raw_data
+from saying.base import quotes_src
 

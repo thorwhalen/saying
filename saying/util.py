@@ -2,15 +2,14 @@
 
 import os
 from functools import partial
-from typing import Iterable, Optional, Union
+from typing import Iterable, Dict, KT, VT
 from config2py import get_app_data_folder
 from graze import graze as _graze
-from hashlib import md5
 import re
 
 package_name = 'saying'
 
-DLFT_DATA_DIR = get_app_data_folder(package_name, ensure_exists=True)
+DFLT_DATA_DIR = get_app_data_folder(package_name, ensure_exists=True)
 
 
 non_alphanumeric_re = re.compile(r'\W+')
@@ -29,9 +28,43 @@ def hash_text(text):
     ... )
 
     """
+    from hashlib import md5
+
     normalized_text = lower_alphanumeric(text)
     return md5(normalized_text.encode()).hexdigest()
 
+
+def remove_surrounding_single_quotes(s):
+    if s.startswith("'") and s.endswith("'"):
+        return s[1:-1]
+    return s
+
+
+def clean_string(s):
+    s = remove_surrounding_single_quotes(s)
+    if s.endswith("\\r"):
+        s = s[:-2]
+    s = s.strip()
+    return s
+
+
+def dict_of_rows_and_columns(rows, columns):
+    for row in rows:
+        yield dict(zip(columns, row))
+
+
+def subdict(keys: Iterable[KT], d: dict = None):
+    if d is None:
+        return partial(subdict, tuple(keys))
+    return {k: d[k] for k in keys}
+
+
+def map_fields(field_map: Dict[KT, KT], d: Dict[KT, VT] = None, *, strict=True):
+    if d is None:
+        return partial(map_fields, field_map, strict=strict)
+    if strict:
+        d = subdict(field_map.keys(), d)
+    return {field_map.get(k, k): v for k, v in d.items()}
 
 
 def extract_sql_data(text, *, bytes_decoder=bytes.decode):
@@ -41,7 +74,7 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     >>> text = '''
     ... -- MySQL dump 10.13  ...
     ... ...
-    ... INSERT INTO `quotes` (col1,col2,col3) VALUES 
+    ... INSERT INTO `quotes` (col1,col2,col3) VALUES
     ... (1,'One', 1.0),
     ... (2,'Two', 2.0),
     ... (3,'Three', 3.0);
@@ -52,16 +85,16 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     """
     import re
 
-    def extract_sql_table_rows(text, *, bytes_decoder=bytes.decode):
+    def extract_sql_table_rows(text, *, bytes_decoder=bytes_decoder):
         if isinstance(text, bytes):
             text = bytes_decoder(text)
         # Find all INSERT INTO statements
         insert_statements = re.findall(
             (
                 r"INSERT INTO "
-                "`[^`]+"  # table name
-                "`.+?"  # could be nothing, or colmns...
-                "VALUES.+?\((.*?)\);"  # statement (rows)
+                r"`[^`]+"  # table name
+                r"`.+?"  # could be nothing, or colmns...
+                r"VALUES.+?\((.*?)\);"  # statement (rows)
             ),
             text,
             re.DOTALL,
@@ -83,8 +116,7 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     return list(extract_sql_table_rows(text, bytes_decoder=bytes_decoder))
 
 
-
-graze = partial(_graze, rootdir=DLFT_DATA_DIR)
+graze = partial(_graze, rootdir=DFLT_DATA_DIR)
 
 graze_urls = {
     'micheleriva_5421': 'https://raw.githubusercontent.com/micheleriva/the-quotes-database/master/src/data/quotes.json',
@@ -100,31 +132,9 @@ names = set(graze_urls.keys())
 
 
 def lenient_bytes_decoder(bytes_: bytes):
-    return bytes_.decode('utf-8', 'replace')
-
-
-def get_raw_data(src=None, bytes_decoder=lenient_bytes_decoder):
-    def _bytes_decoder(x):
-        if isinstance(x, bytes):
-            return bytes_decoder(x)
-        return x
-
-    if src is None:
-        print("Returning named sources...")
-        return names
-    if src in graze_urls:
-        src = graze_urls[src]
-    if src.startswith('http'):
-        data_bytes = graze(src)
-        # TODO: Use suffix-based decoder (dol) here
-        if src.endswith('.json'):
-            return __import__('json').loads(_bytes_decoder(data_bytes))
-        elif src.endswith('.sql'):
-            return extract_sql_data(_bytes_decoder(data_bytes))
-        else:
-            return data_bytes
-
-    raise ValueError(f"Unknown source: {src}. Try one of {names}.")
+    if isinstance(bytes_, bytes):
+        return bytes_.decode('utf-8', 'replace')
+    return bytes_
 
 
 def clog(condition, *args, log_func=print, **kwargs):
@@ -140,7 +150,7 @@ def clog(condition, *args, log_func=print, **kwargs):
 
         return functools.partial(clog, condition, log_func=log_func)
     if condition:
-        log_func(*args, **kwargs)
+        return log_func(*args, **kwargs)
 
 
 def download_bz2(url, filename, *, verbose=True):

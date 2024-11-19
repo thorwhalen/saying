@@ -15,6 +15,13 @@ DFLT_DATA_DIR = get_app_data_folder(package_name, ensure_exists=True)
 non_alphanumeric_re = re.compile(r'\W+')
 
 
+# TODO: Make a non-pandas version to not have to depend on pandas
+def remove_duplicates(list_of_dicts, keys=None):
+    import pandas as pd
+
+    return pd.DataFrame(list_of_dicts).drop_duplicates(keys).to_dict(orient='records')
+
+
 def lower_alphanumeric(text):
     return non_alphanumeric_re.sub(' ', text).strip().lower()
 

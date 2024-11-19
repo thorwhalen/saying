@@ -3,7 +3,12 @@
 from functools import partial
 from dol import Pipe, FuncReader, add_ipython_key_completions
 
-from saying.util import lenient_bytes_decoder, extract_sql_data, graze
+from saying.util import (
+    lenient_bytes_decoder,
+    extract_sql_data,
+    graze,
+    remove_duplicates,
+)
 
 
 def identity(x):
@@ -28,11 +33,12 @@ def pipe(*funcs, **named_funcs):
 # Explicit source-to-object definition of the quotes sources
 # TODO: Some opportunities for declarative-compression (routing)
 sources = {
-    'micheleriva_5421': (
+    'micheleriva_1638': (
         'https://raw.githubusercontent.com/micheleriva/the-quotes-database/master/src/data/quotes.json',
         graze,
         lenient_bytes_decoder,
         __import__('json').loads,
+        partial(remove_duplicates, keys='quote'),
     ),
     'englishquotesdatabase_75968': (
         'https://raw.githubusercontent.com/x16bkkamz6rkb78rzt7op/englishquotesdatabase/master/quotesdb.sql',

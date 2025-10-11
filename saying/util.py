@@ -3,13 +3,13 @@
 import os
 from functools import partial
 from typing import Iterable, Dict, KT, VT
-from config2py import get_app_data_folder
+from config2py import get_app_config_folder
 from graze import graze as _graze
 import re
 
 package_name = 'saying'
 
-DFLT_DATA_DIR = get_app_data_folder(package_name, ensure_exists=True)
+DFLT_DATA_DIR = get_app_config_folder(package_name, ensure_exists=True)
 
 
 non_alphanumeric_re = re.compile(r'\W+')

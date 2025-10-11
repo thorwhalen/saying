@@ -2,7 +2,7 @@
 
 import os
 from typing import Iterable, Optional
-from config2py import get_app_data_folder
+from config2py import get_app_config_folder
 from saying.util import (
     clog,
     package_name,
@@ -10,7 +10,7 @@ from saying.util import (
     DLFT_DATA_DIR,
 )
 
-DLFT_WIKI_QUOTES_DATA_DIR = get_app_data_folder(
+DLFT_WIKI_QUOTES_DATA_DIR = get_app_config_folder(
     os.path.join(DLFT_DATA_DIR, 'wikimedia'), ensure_exists=True
 )
 

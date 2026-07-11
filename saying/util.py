@@ -2,7 +2,8 @@
 
 import os
 from functools import partial
-from typing import Iterable, Dict, KT, VT
+from typing import Dict, KT, VT
+from collections.abc import Iterable
 from config2py import get_app_config_folder
 from graze import graze as _graze
 import re
@@ -66,7 +67,7 @@ def subdict(keys: Iterable[KT], d: dict = None):
     return {k: d[k] for k in keys}
 
 
-def map_fields(field_map: Dict[KT, KT], d: Dict[KT, VT] = None, *, strict=True):
+def map_fields(field_map: dict[KT, KT], d: dict[KT, VT] = None, *, strict=True):
     if d is None:
         return partial(map_fields, field_map, strict=strict)
     if strict:

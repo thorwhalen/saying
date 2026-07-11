@@ -1,7 +1,8 @@
 """Get quotes data etc."""
 
 import os
-from typing import Iterable, Optional
+from typing import Optional
+from collections.abc import Iterable
 from config2py import get_app_config_folder
 from saying.util import (
     clog,

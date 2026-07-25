@@ -8,11 +8,11 @@ from saying.util import (
     clog,
     package_name,
     download_and_extract,
-    DLFT_DATA_DIR,
+    DFLT_DATA_DIR,
 )
 
 DLFT_WIKI_QUOTES_DATA_DIR = get_app_config_folder(
-    os.path.join(DLFT_DATA_DIR, 'wikimedia'), ensure_exists=True
+    os.path.join(DFLT_DATA_DIR, 'wikimedia'), ensure_exists=True
 )
 
 

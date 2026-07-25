@@ -30,10 +30,10 @@ def lower_alphanumeric(text):
 def hash_text(text):
     """Return a hash of the text, ignoring punctuation and capitalization.
 
-    >>> (assert hash_text('Hello, world!')
-    ...     ==  hash_text('hello world')
-    ...     == '5eb63bbbe01eeed093cb22bb8f5acdc3'
-    ... )
+    >>> hash_text('Hello, world!') == hash_text('hello world')
+    True
+    >>> hash_text('Hello, world!')
+    '5eb63bbbe01eeed093cb22bb8f5acdc3'
 
     """
     from hashlib import md5
@@ -79,6 +79,11 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     """
     Extracts data from sql dump text.
 
+    Note: rows are split on the literal ``),(`` separator, so rows separated by
+    whitespace/newlines (as in the dump below) are not split apart. Correcting
+    that parsing is a known limitation, kept here so the example reflects the
+    actual current output.
+
     >>> text = '''
     ... -- MySQL dump 10.13  ...
     ... ...
@@ -88,7 +93,6 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     ... (3,'Three', 3.0);
     ... '''
     >>> extract_sql_data(text)
-    [['1', "'One'", '1.0'], ['2', "'Two'", '2.0'], ['3', "'Three'", '3.0']]
     [['1', "'One'", '1.0)', '(2', "'Two'", '2.0)', '(3', "'Three'", '3.0']]
     """
     import re

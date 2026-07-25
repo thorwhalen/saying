@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>saying.util &mdash; saying 0.0.2 documentation</title>
+  <title>saying.util &mdash; saying 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e3a6060d"></script>
+      <script src="../../_static/documentation_options.js?v=47de8214"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -102,11 +102,10 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="saying.util.extract_sql_data">
 <span class="sig-prename descclassname"><span class="pre">saying.util.</span></span><span class="sig-name descname"><span class="pre">extract_sql_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_decoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;method</span> <span class="pre">'decode'</span> <span class="pre">of</span> <span class="pre">'bytes'</span> <span class="pre">objects&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/saying/util.html#extract_sql_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#saying.util.extract_sql_data" title="Link to this definition"></a></dt>
-<dd><p>Extracts data from sql dump text.</p>
-<p>Note: rows are split on the literal <code class="docutils literal notranslate"><span class="pre">),(</span></code> separator, so rows separated by
-whitespace/newlines (as in the dump below) are not split apart. Correcting
-that parsing is a known limitation, kept here so the example reflects the
-actual current output.</p>
+<dd><p>Extracts data from sql dump text: one <code class="docutils literal notranslate"><span class="pre">[field,</span> <span class="pre">...]</span></code> list per row of each
+<code class="docutils literal notranslate"><span class="pre">INSERT</span> <span class="pre">INTO</span> <span class="pre">...</span> <span class="pre">VALUES</span> <span class="pre">(...),(...);</span></code> statement.</p>
+<p>Rows are recognised even when the <code class="docutils literal notranslate"><span class="pre">),(</span></code> separators are pretty-printed
+across lines (as MySQL dumps often are):</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">... </span><span class="s1">-- MySQL dump 10.13  ...</span>
 <span class="gp">... </span><span class="s1">...</span>
@@ -116,7 +115,7 @@ actual current output.</p>
 <span class="gp">... </span><span class="s1">(3,&#39;Three&#39;, 3.0);</span>
 <span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">extract_sql_data</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-<span class="go">[[&#39;1&#39;, &quot;&#39;One&#39;&quot;, &#39;1.0)&#39;, &#39;(2&#39;, &quot;&#39;Two&#39;&quot;, &#39;2.0)&#39;, &#39;(3&#39;, &quot;&#39;Three&#39;&quot;, &#39;3.0&#39;]]</span>
+<span class="go">[[&#39;1&#39;, &quot;&#39;One&#39;&quot;, &#39;1.0&#39;], [&#39;2&#39;, &quot;&#39;Two&#39;&quot;, &#39;2.0&#39;], [&#39;3&#39;, &quot;&#39;Three&#39;&quot;, &#39;3.0&#39;]]</span>
 </pre></div>
 </div>
 </dd></dl>

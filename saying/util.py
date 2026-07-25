@@ -8,23 +8,23 @@ from config2py import get_app_config_folder
 from graze import graze as _graze
 import re
 
-package_name = 'saying'
+package_name = "saying"
 
 DFLT_DATA_DIR = get_app_config_folder(package_name, ensure_exists=True)
 
 
-non_alphanumeric_re = re.compile(r'\W+')
+non_alphanumeric_re = re.compile(r"\W+")
 
 
 # TODO: Make a non-pandas version to not have to depend on pandas
 def remove_duplicates(list_of_dicts, keys=None):
     import pandas as pd
 
-    return pd.DataFrame(list_of_dicts).drop_duplicates(keys).to_dict(orient='records')
+    return pd.DataFrame(list_of_dicts).drop_duplicates(keys).to_dict(orient="records")
 
 
 def lower_alphanumeric(text):
-    return non_alphanumeric_re.sub(' ', text).strip().lower()
+    return non_alphanumeric_re.sub(" ", text).strip().lower()
 
 
 def hash_text(text):
@@ -114,13 +114,13 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
 
         for statement in insert_statements:
             # Split the statement into individual records
-            records = statement.split('),(')
+            records = statement.split("),(")
             for record in records:
                 # Clean and split the record into fields
-                fields = record.strip().split(',')
+                fields = record.strip().split(",")
                 # Clean up each field (remove surrounding quotes and escape sequences)
                 cleaned_fields = [
-                    re.sub(r"(^' | '$)", '', field).replace("\\'", "'").strip()
+                    re.sub(r"(^' | '$)", "", field).replace("\\'", "'").strip()
                     for field in fields
                 ]
                 yield cleaned_fields
@@ -131,8 +131,8 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
 graze = partial(_graze, rootdir=DFLT_DATA_DIR)
 
 graze_urls = {
-    'micheleriva_5421': 'https://raw.githubusercontent.com/micheleriva/the-quotes-database/master/src/data/quotes.json',
-    'x16bkkamz6rkb78rzt7op_75968': 'https://raw.githubusercontent.com/x16bkkamz6rkb78rzt7op/englishquotesdatabase/master/quotesdb.sql',
+    "micheleriva_5421": "https://raw.githubusercontent.com/micheleriva/the-quotes-database/master/src/data/quotes.json",
+    "x16bkkamz6rkb78rzt7op_75968": "https://raw.githubusercontent.com/x16bkkamz6rkb78rzt7op/englishquotesdatabase/master/quotesdb.sql",
 }
 
 
@@ -145,7 +145,7 @@ names = set(graze_urls.keys())
 
 def lenient_bytes_decoder(bytes_: bytes):
     if isinstance(bytes_, bytes):
-        return bytes_.decode('utf-8', 'replace')
+        return bytes_.decode("utf-8", "replace")
     return bytes_
 
 
@@ -172,7 +172,7 @@ def download_bz2(url, filename, *, verbose=True):
         if verbose:
             print(f"Downloading {url} to {filename}")
         response = requests.get(url, verify=False)
-        with open(filename, 'wb') as file:
+        with open(filename, "wb") as file:
             file.write(response.content)
     else:
         clog(verbose, f"File {filename} already exists. Skipping download.")
@@ -193,7 +193,7 @@ def extract_bz2(bz_file, extract_to_file=None, *, rm_bz2_after_extraction=True):
 
     extract_to_file = extract_to_file or without_extension(bz_file)
     try:
-        with bz2.BZ2File(bz_file, 'rb') as f_in, open(extract_to_file, 'wb') as f_out:
+        with bz2.BZ2File(bz_file, "rb") as f_in, open(extract_to_file, "wb") as f_out:
             f_out.writelines(f_in)
     except OSError as e:
         raise OSError(

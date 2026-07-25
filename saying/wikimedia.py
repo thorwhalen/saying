@@ -12,7 +12,7 @@ from saying.util import (
 )
 
 DLFT_WIKI_QUOTES_DATA_DIR = get_app_config_folder(
-    os.path.join(DFLT_DATA_DIR, 'wikimedia'), ensure_exists=True
+    os.path.join(DFLT_DATA_DIR, "wikimedia"), ensure_exists=True
 )
 
 
@@ -40,7 +40,7 @@ def download_and_process_wiki_data(
         # extract words (\w+) from string
         import re
 
-        languages = re.findall(r'\w+', languages)
+        languages = re.findall(r"\w+", languages)
 
     clog(verbose, "DATE:", date)
 
@@ -99,10 +99,10 @@ def parse_wikimedia_xml(file_path):
 
     quotes_data = []
 
-    for page in root.findall('{http://www.mediawiki.org/xml/export-0.10/}page'):
-        title_elem = page.find('{http://www.mediawiki.org/xml/export-0.10/}title')
+    for page in root.findall("{http://www.mediawiki.org/xml/export-0.10/}page"):
+        title_elem = page.find("{http://www.mediawiki.org/xml/export-0.10/}title")
         text_elem = page.find(
-            '{http://www.mediawiki.org/xml/export-0.10/}revision/{http://www.mediawiki.org/xml/export-0.10/}text'
+            "{http://www.mediawiki.org/xml/export-0.10/}revision/{http://www.mediawiki.org/xml/export-0.10/}text"
         )
 
         # if title_elem is not None and text_elem is not None:
@@ -123,7 +123,7 @@ def parse_wikimedia_xml(file_path):
             text = text_elem.text
 
             # Basic parsing for quotes (may need adjustment based on the actual format)
-            quotes = re.findall(r'\*\s*\'\'(.+?)\'\'', text)
+            quotes = re.findall(r"\*\s*\'\'(.+?)\'\'", text)
             for quote in quotes:
                 quotes_data.append((title, quote))
 

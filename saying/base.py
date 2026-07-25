@@ -33,15 +33,15 @@ def pipe(*funcs, **named_funcs):
 # Explicit source-to-object definition of the quotes sources
 # TODO: Some opportunities for declarative-compression (routing)
 sources = {
-    'micheleriva_1638': (
-        'https://raw.githubusercontent.com/micheleriva/the-quotes-database/master/src/data/quotes.json',
+    "micheleriva_1638": (
+        "https://raw.githubusercontent.com/micheleriva/the-quotes-database/master/src/data/quotes.json",
         graze,
         lenient_bytes_decoder,
-        __import__('json').loads,
-        partial(remove_duplicates, keys='quote'),
+        __import__("json").loads,
+        partial(remove_duplicates, keys="quote"),
     ),
-    'englishquotesdatabase_75968': (
-        'https://raw.githubusercontent.com/x16bkkamz6rkb78rzt7op/englishquotesdatabase/master/quotesdb.sql',
+    "englishquotesdatabase_75968": (
+        "https://raw.githubusercontent.com/x16bkkamz6rkb78rzt7op/englishquotesdatabase/master/quotesdb.sql",
         graze,
         lenient_bytes_decoder,
         extract_sql_data,

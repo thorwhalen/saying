@@ -1,0 +1,4 @@
+saying.util
+===========
+.. automodule:: saying.util
+   :members:

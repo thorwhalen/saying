@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>saying.wikimedia &mdash; saying 0.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e3a6060d"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            saying
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/saying.html">saying</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/saying/base.html">saying.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/saying/prep.html">saying.prep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/saying/util.html">saying.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/saying/wikimedia.html">saying.wikimedia</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">saying</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">saying.wikimedia</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for saying.wikimedia</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Get quotes data etc.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_app_config_folder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">saying.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">clog</span><span class="p">,</span>
+    <span class="n">package_name</span><span class="p">,</span>
+    <span class="n">download_and_extract</span><span class="p">,</span>
+    <span class="n">DFLT_DATA_DIR</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">DLFT_WIKI_QUOTES_DATA_DIR</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DFLT_DATA_DIR</span><span class="p">,</span> <span class="s1">&#39;wikimedia&#39;</span><span class="p">),</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="download_and_process_wiki_data">
+<a class="viewcode-back" href="../../module_docs/saying/wikimedia.html#saying.wikimedia.download_and_process_wiki_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_and_process_wiki_data</span><span class="p">(</span>
+    <span class="n">languages</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DLFT_WIKI_QUOTES_DATA_DIR</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;20231201&quot;</span><span class="p">,</span>  <span class="c1"># TODO: Get most recent automatically from https://dumps.wikimedia.org/{language}wikiquote/</span>
+    <span class="n">datedbpedia2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;2022.12.01&quot;</span><span class="p">,</span>  <span class="c1"># TODO: Get most recent automatically from https://downloads.dbpedia.org/repo/dbpedia/wikidata/sameas-all-wikis/</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads and processes quotation data from wikimedia and dbpedia.</span>
+
+<span class="sd">    If you have trouble with it, try running again, and if problems persist, download</span>
+<span class="sd">    the needed resources manually and place them in the data_dir.</span>
+
+<span class="sd">    You&#39;ll find them here: https://dumps.wikimedia.org/enwikiquote/</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">languages</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># extract words (\w+) from string</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+        <span class="n">languages</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\w+&#39;</span><span class="p">,</span> <span class="n">languages</span><span class="p">)</span>
+
+    <span class="n">clog</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;DATE:&quot;</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+
+    <span class="c1"># Download and extract ids.ttl.bz2</span>
+    <span class="n">download_and_extract</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;https://downloads.dbpedia.org/repo/dbpedia/wikidata/sameas-all-wikis/</span><span class="si">{</span><span class="n">datedbpedia2</span><span class="si">}</span><span class="s2">/sameas-all-wikis.ttl.bz2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ids.ttl&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Process each language</span>
+    <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">language</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">url_base</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://dumps.wikimedia.org/</span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">wikiquote/</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">wikiquote-</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">-&quot;</span>
+        <span class="n">language_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">language_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Download and extract wikidata.sql.gz and pages.xml.bz2</span>
+        <span class="n">download_and_extract</span><span class="p">(</span>
+            <span class="n">url_base</span> <span class="o">+</span> <span class="s2">&quot;wbc_entity_usage.sql.gz&quot;</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">language_dir</span><span class="p">,</span> <span class="s2">&quot;wikidata.sql&quot;</span><span class="p">),</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">download_and_extract</span><span class="p">(</span>
+            <span class="n">url_base</span> <span class="o">+</span> <span class="s2">&quot;pages-meta-current.xml.bz2&quot;</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">language_dir</span><span class="p">,</span> <span class="s2">&quot;pages.xml&quot;</span><span class="p">),</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Additional processing steps can be added here as per the original script</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+
+<div class="viewcode-block" id="parse_wikimedia_xml">
+<a class="viewcode-back" href="../../module_docs/saying/wikimedia.html#saying.wikimedia.parse_wikimedia_xml">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_wikimedia_xml</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse (author, quote_text) pairs from xml file.</span>
+<span class="sd">     The xml file is assumped to be one that has been downloaded from wikimedia</span>
+<span class="sd">     (https://dumps.wikimedia.org/enwikiquote/).</span>
+<span class="sd">     For example, using the `download_and_process_wiki_data` function.</span>
+
+<span class="sd">    Note the relative filepath has, at the time of writing this, the format</span>
+<span class="sd">    `&quot;{language}/pages.xml&quot;` (e.g. `&quot;en/pages.xml&quot;`)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+    <span class="n">quotes_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;{http://www.mediawiki.org/xml/export-0.10/}page&#39;</span><span class="p">):</span>
+        <span class="n">title_elem</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;{http://www.mediawiki.org/xml/export-0.10/}title&#39;</span><span class="p">)</span>
+        <span class="n">text_elem</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+            <span class="s1">&#39;{http://www.mediawiki.org/xml/export-0.10/}revision/{http://www.mediawiki.org/xml/export-0.10/}text&#39;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># if title_elem is not None and text_elem is not None:</span>
+        <span class="c1">#     title = title_elem.text</span>
+        <span class="c1">#     text = text_elem.text</span>
+
+        <span class="c1">#     # Basic parsing for quotes (may need adjustment based on the actual format)</span>
+        <span class="c1">#     quotes = re.findall(r&#39;\*\s*\&#39;\&#39;(.+?)\&#39;\&#39;&#39;, text)</span>
+        <span class="c1">#     for quote in quotes:</span>
+        <span class="c1">#         quotes_data.append((title, quote))</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">title_elem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">text_elem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">text_elem</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">title_elem</span><span class="o">.</span><span class="n">text</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text_elem</span><span class="o">.</span><span class="n">text</span>
+
+            <span class="c1"># Basic parsing for quotes (may need adjustment based on the actual format)</span>
+            <span class="n">quotes</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\*\s*</span><span class="se">\&#39;\&#39;</span><span class="s1">(.+?)</span><span class="se">\&#39;\&#39;</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">quote</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">:</span>
+                <span class="n">quotes_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">title</span><span class="p">,</span> <span class="n">quote</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">quotes_data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

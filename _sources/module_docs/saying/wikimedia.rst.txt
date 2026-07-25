@@ -1,0 +1,4 @@
+saying.wikimedia
+================
+.. automodule:: saying.wikimedia
+   :members:

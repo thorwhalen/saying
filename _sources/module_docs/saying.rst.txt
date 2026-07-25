@@ -1,0 +1,4 @@
+saying
+======
+.. automodule:: saying
+   :members:

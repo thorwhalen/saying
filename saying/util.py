@@ -77,12 +77,11 @@ def map_fields(field_map: dict[KT, KT], d: dict[KT, VT] = None, *, strict=True):
 
 def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     """
-    Extracts data from sql dump text.
+    Extracts data from sql dump text: one ``[field, ...]`` list per row of each
+    ``INSERT INTO ... VALUES (...),(...);`` statement.
 
-    Note: rows are split on the literal ``),(`` separator, so rows separated by
-    whitespace/newlines (as in the dump below) are not split apart. Correcting
-    that parsing is a known limitation, kept here so the example reflects the
-    actual current output.
+    Rows are recognised even when the ``),(`` separators are pretty-printed
+    across lines (as MySQL dumps often are):
 
     >>> text = '''
     ... -- MySQL dump 10.13  ...
@@ -93,7 +92,7 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
     ... (3,'Three', 3.0);
     ... '''
     >>> extract_sql_data(text)
-    [['1', "'One'", '1.0)', '(2', "'Two'", '2.0)', '(3', "'Three'", '3.0']]
+    [['1', "'One'", '1.0'], ['2', "'Two'", '2.0'], ['3', "'Three'", '3.0']]
     """
     import re
 
@@ -113,8 +112,10 @@ def extract_sql_data(text, *, bytes_decoder=bytes.decode):
         )
 
         for statement in insert_statements:
-            # Split the statement into individual records
-            records = statement.split("),(")
+            # Split the statement into individual records. Rows are separated by
+            # `),(` possibly with surrounding whitespace/newlines (as in a
+            # pretty-printed dump), so allow whitespace around the separator.
+            records = re.split(r"\)\s*,\s*\(", statement)
             for record in records:
                 # Clean and split the record into fields
                 fields = record.strip().split(",")

@@ -1,0 +1,13 @@
+saying.wikimedia
+================
+
+.. automodule:: saying.wikimedia
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      download_and_process_wiki_data
+      parse_wikimedia_xml
+   

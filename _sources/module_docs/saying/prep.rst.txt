@@ -1,4 +1,0 @@
-saying.prep
-===========
-.. automodule:: saying.prep
-   :members:

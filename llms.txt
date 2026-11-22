@@ -1,0 +1,23 @@
+# saying
+
+> AI-enabled quotes search
+
+
+## Pages
+
+- [saying](index.html.md): AI-enabled quotes search
+- [API reference](api.html.md): | &#96;saying&#96;   | AI tools for quotes and sayings.   |
+- [saying](_autosummary/saying.html.md): AI tools for quotes and sayings.
+- [saying.base](_autosummary/saying.base.html.md): Base functionality for saying package.
+- [saying.prep](_autosummary/saying.prep.html.md): Data Preperation
+- [saying.util](_autosummary/saying.util.html.md): Utils for saying package.
+- [saying.wikimedia](_autosummary/saying.wikimedia.html.md): Get quotes data etc.
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-22 20:47 UTC&#42;&#42; from commit &lt;a href="https://github.com/tho...
+
+## Optional
+
+- [saying.md](saying.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

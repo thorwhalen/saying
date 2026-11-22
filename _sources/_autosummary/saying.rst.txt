@@ -1,0 +1,16 @@
+﻿saying
+======
+
+.. automodule:: saying
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   base
+   prep
+   util
+   wikimedia

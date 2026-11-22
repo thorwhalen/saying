@@ -1,0 +1,28 @@
+saying.util
+===========
+
+.. automodule:: saying.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      clean_string
+      clog
+      dict_of_rows_and_columns
+      download_and_extract
+      download_bz2
+      extension_of
+      extract_bz2
+      extract_sql_data
+      hash_text
+      lenient_bytes_decoder
+      lower_alphanumeric
+      map_fields
+      register_graze_url
+      remove_duplicates
+      remove_surrounding_single_quotes
+      subdict
+      without_extension
+   

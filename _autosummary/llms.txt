@@ -1,0 +1,16 @@
+# saying
+
+> AI-enabled quotes search
+
+
+## Pages in this subsection
+
+- [saying](saying.html.md): AI tools for quotes and sayings.
+- [saying.base](saying.base.html.md): Base functionality for saying package.
+- [saying.prep](saying.prep.html.md): Data Preperation
+- [saying.util](saying.util.html.md): Utils for saying package.
+- [saying.wikimedia](saying.wikimedia.html.md): Get quotes data etc.
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

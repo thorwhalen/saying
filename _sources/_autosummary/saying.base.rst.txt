@@ -1,0 +1,13 @@
+saying.base
+===========
+
+.. automodule:: saying.base
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      identity
+      pipe
+   
